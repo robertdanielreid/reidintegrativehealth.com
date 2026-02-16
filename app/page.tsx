@@ -15,7 +15,7 @@ const IconMap: Record<string, any> = {
 };
 
 async function getHomepageData() {
-  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+  if (!client) {
     return null;
   }
   try {
