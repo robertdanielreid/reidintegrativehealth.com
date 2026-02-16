@@ -7,7 +7,7 @@ export default defineConfig({
   name: 'default',
   title: 'Reid Integrative Health CMS',
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'reid-integrative',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 't9xq5v6c',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
 
   basePath: '/studio',
