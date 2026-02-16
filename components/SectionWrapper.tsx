@@ -17,15 +17,16 @@ export default function SectionWrapper({
   delay = 0,
 }: SectionWrapperProps) {
   return (
-    <motion.section
-      id={id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay }}
-      className={cn("py-16 md:py-24 px-6 md:px-12 max-w-7xl mx-auto", className)}
-    >
-      {children}
-    </motion.section>
+    <section id={id} className={className}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay }}
+        className="py-16 md:py-24 px-6 md:px-12 max-w-7xl mx-auto"
+      >
+        {children}
+      </motion.div>
+    </section>
   );
 }

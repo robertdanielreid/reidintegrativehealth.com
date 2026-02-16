@@ -8,6 +8,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/blog/microplastics-and-mitochondria',
+        destination: '/blog/microplastics-mitochondria',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
