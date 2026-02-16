@@ -121,7 +121,7 @@ export const blogPosts = [
       <p>We utilize the Shoemaker Protocol and subsequent integrative refinements to help clients navigate recovery. This involves removing the source of exposure, using specific sequestering agents (binders), and addressing the resulting hormonal and inflammatory imbalances.</p>
     `,
     date: "2024-05-10",
-    image: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=800&auto=format&fit=crop"
   },
   {
     slug: "red-light-therapy",
