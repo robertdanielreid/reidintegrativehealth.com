@@ -15,11 +15,14 @@ const IconMap: Record<string, any> = {
 };
 
 async function getHomepageData() {
+  if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID === "reid-integrative" || !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+    return null;
+  }
   try {
     const data = await client.fetch(homepageQuery);
     return data;
   } catch (error) {
-    console.error("Sanity fetch error:", error);
+    console.warn("Sanity fetch error:", error);
     return null;
   }
 }
