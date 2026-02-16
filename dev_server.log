@@ -26,3 +26,4 @@
  GET / 200 in 31ms
  ⨯ upstream image response failed for https://images.unsplash.com/photo-1532187863486-abf51ad990d9?q=80&w=2000&auto=format&fit=crop 404
  ⨯ upstream image response failed for https://images.unsplash.com/photo-1532187863486-abf51ad990d9?q=80&w=2000&auto=format&fit=crop 404
+ ✓ Compiled in 7.2s (1428 modules)

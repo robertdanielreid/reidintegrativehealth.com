@@ -14,7 +14,7 @@ export default function Home() {
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden bg-primary text-primary-foreground">
         <div className="absolute inset-0 opacity-20">
           <Image
-            src="https://images.unsplash.com/photo-1532187863486-abf51ad990d9?q=80&w=2000&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=2000&auto=format&fit=crop"
             alt="Laboratory background"
             fill
             className="object-cover"
