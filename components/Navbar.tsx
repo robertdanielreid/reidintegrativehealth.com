@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { urlFor } from "@/lib/sanity/image";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { name: "Services", href: "/services" },
@@ -14,54 +16,98 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  logo?: any;
+  logoPosition?: string;
+}
+
+export default function Navbar({ logo, logoPosition = 'center' }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const logoUrl = logo ? urlFor(logo).url() : "/reidintegrativehealth-logo.png";
+
+  const renderLogo = (size: "desktop" | "mobile") => (
+    <Link href="/" className="shrink-0 transition-transform hover:scale-105">
+      <Image
+        src={logoUrl}
+        alt="Reid Integrative Health"
+        width={size === "desktop" ? 140 : 100}
+        height={size === "desktop" ? 140 : 100}
+        className={cn(
+          size === "desktop" ? "w-[140px]" : "w-[100px]",
+          "h-auto"
+        )}
+        priority
+      />
+    </Link>
+  );
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white border-b">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/* Desktop Nav */}
-        <div className="hidden md:grid grid-cols-3 items-center py-8">
-          <div className="flex justify-start items-center gap-8">
-            {navLinks.slice(0, 2).map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium hover:text-secondary transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
+        {/* Desktop Nav - Centered Logo Layout */}
+        {logoPosition === 'center' && (
+          <div className="hidden md:grid grid-cols-3 items-center py-8">
+            <div className="flex justify-start items-center gap-8">
+              {navLinks.slice(0, 2).map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm font-medium hover:text-secondary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
 
-          <div className="flex justify-center items-center">
-            <Link href="/" className="shrink-0">
-              <Image
-                src="/reidintegrativehealth-logo.png"
-                alt="Reid Integrative Health"
-                width={140}
-                height={140}
-                className="w-[140px] h-auto"
-                priority
-              />
-            </Link>
-          </div>
+            <div className="flex items-center justify-center">
+              {renderLogo("desktop")}
+            </div>
 
-          <div className="flex justify-end items-center gap-8">
-            {navLinks.slice(2).map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium hover:text-secondary transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Button variant="secondary" className="font-semibold" asChild>
-              <Link href="/contact">Book Consultation</Link>
-            </Button>
+            <div className="flex justify-end items-center gap-8">
+              {navLinks.slice(2).map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm font-medium hover:text-secondary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Button variant="secondary" className="font-semibold" asChild>
+                <Link href="/contact">Book Consultation</Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Desktop Nav - Left Logo Layout */}
+        {(logoPosition === 'left' || logoPosition === 'right') && (
+          <div className={cn(
+            "hidden md:flex items-center py-8 gap-12",
+            logoPosition === 'right' ? "flex-row-reverse" : "flex-row"
+          )}>
+            {renderLogo("desktop")}
+
+            <div className={cn(
+              "flex items-center gap-8 flex-1",
+              logoPosition === 'left' ? "justify-end" : "justify-start"
+            )}>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm font-medium hover:text-secondary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Button variant="secondary" className="font-semibold" asChild>
+                <Link href="/contact">Book Consultation</Link>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Mobile Nav Header */}
         <div className="flex md:hidden items-center justify-between py-6">
@@ -73,18 +119,8 @@ export default function Navbar() {
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          <Link href="/" className="shrink-0">
-            <Image
-              src="/reidintegrativehealth-logo.png"
-              alt="Reid Integrative Health"
-              width={100}
-              height={100}
-              className="w-[100px] h-auto"
-              priority
-            />
-          </Link>
+          {renderLogo("mobile")}
 
-          {/* Placeholder for symmetry */}
           <div className="w-10" />
         </div>
       </div>

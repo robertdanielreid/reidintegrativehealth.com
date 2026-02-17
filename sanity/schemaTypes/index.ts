@@ -3,6 +3,8 @@ import { sectionType } from './section';
 import { ctaType } from './cta';
 import { testimonialType } from './testimonial';
 import { pageType } from './page';
+import { siteSettingsType } from './siteSettings';
+import { postType } from './post';
 
 export const schemaTypes = [
   heroType,
@@ -10,4 +12,6 @@ export const schemaTypes = [
   ctaType,
   testimonialType,
   pageType,
+  siteSettingsType,
+  postType,
 ];

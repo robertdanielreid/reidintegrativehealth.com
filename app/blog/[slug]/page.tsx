@@ -5,6 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, Calendar, Clock } from "lucide-react";
 import { Metadata } from "next";
+import { client } from "@/lib/sanity/client";
+import { postBySlugQuery, allPostsQuery } from "@/lib/sanity/queries";
+import { urlFor } from "@/lib/sanity/image";
+import { PortableText } from "@portabletext/react";
 
 interface PostPageProps {
   params: {
@@ -12,29 +16,108 @@ interface PostPageProps {
   };
 }
 
+async function getPost(slug: string) {
+  try {
+    return await client.fetch(postBySlugQuery, { slug });
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    return null;
+  }
+}
+
 export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
+  const sanityPosts = await client.fetch(allPostsQuery);
+  const sanitySlugs = sanityPosts.map((post: any) => ({
+    slug: post.slug.current,
+  }));
+
+  const fallbackSlugs = blogPosts.map((post) => ({
     slug: post.slug,
   }));
+
+  return [...sanitySlugs, ...fallbackSlugs];
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const sanityPost = await getPost(params.slug);
+  const fallbackPost = blogPosts.find((p) => p.slug === params.slug);
+  const post = sanityPost || fallbackPost;
+
   if (!post) return { title: "Post Not Found" };
 
   return {
     title: `${post.title} | Reid Integrative`,
-    description: post.excerpt,
+    description: sanityPost ? "Blog post from Reid Integrative" : post.excerpt,
   };
 }
 
-export default function BlogPostPage({ params }: PostPageProps) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: PostPageProps) {
+  const sanityPost = await getPost(params.slug);
+  const fallbackPost = blogPosts.find((p) => p.slug === params.slug);
 
-  if (!post) {
+  if (!sanityPost && !fallbackPost) {
     notFound();
   }
 
+  if (sanityPost) {
+    return (
+      <div className="pt-24 pb-20">
+        <SectionWrapper>
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-8"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            Back to all articles
+          </Link>
+
+          <article className="max-w-3xl mx-auto">
+            <div className="mb-10">
+              <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                {sanityPost.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  {sanityPost.publishedAt ? new Date(sanityPost.publishedAt).toLocaleDateString('en-US', {
+                    month: 'long', day: 'numeric', year: 'numeric'
+                  }) : "Recent"}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Read time: Dynamic
+                </div>
+              </div>
+            </div>
+
+            {sanityPost.mainImage && (
+              <div className="relative aspect-video w-full mb-12 rounded-3xl overflow-hidden shadow-xl">
+                <Image
+                  src={urlFor(sanityPost.mainImage).url()}
+                  alt={sanityPost.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            )}
+
+            <div className="prose prose-slate prose-lg max-w-none
+              prose-headings:text-primary prose-headings:font-bold
+              prose-a:text-secondary prose-strong:text-primary
+              prose-ul:list-disc prose-ol:list-decimal">
+              <PortableText value={sanityPost.body} />
+            </div>
+
+            <NewsletterCTA />
+          </article>
+        </SectionWrapper>
+      </div>
+    );
+  }
+
+  // Fallback for hardcoded posts
+  const post = fallbackPost!;
   return (
     <div className="pt-24 pb-20">
       <SectionWrapper>
@@ -83,7 +166,16 @@ export default function BlogPostPage({ params }: PostPageProps) {
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
-          <div className="mt-16 pt-10 border-t border-border">
+          <NewsletterCTA />
+        </article>
+      </SectionWrapper>
+    </div>
+  );
+}
+
+function NewsletterCTA() {
+    return (
+        <div className="mt-16 pt-10 border-t border-border">
             <div className="bg-muted p-8 rounded-2xl">
               <h3 className="text-xl font-bold mb-4">Want more science-backed health tips?</h3>
               <p className="text-muted-foreground mb-6">
@@ -101,8 +193,5 @@ export default function BlogPostPage({ params }: PostPageProps) {
               </div>
             </div>
           </div>
-        </article>
-      </SectionWrapper>
-    </div>
-  );
+    )
 }
