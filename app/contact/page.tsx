@@ -103,9 +103,8 @@ function ContactFallback() {
               </div>
 
               <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100">
-                {/* Fallback form - not fully functional as it lacks the client-side logic in this component,
-                    but enough for a fallback UI */}
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                {/* Fallback form - static UI for the Server Component fallback */}
+                <div className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <Input id="name" placeholder="John Doe" />
@@ -127,10 +126,10 @@ function ContactFallback() {
                     <Label htmlFor="message">How can we help?</Label>
                     <Textarea id="message" placeholder="Tell us a bit about your health goals..." className="min-h-[150px]" />
                   </div>
-                  <Button type="submit" variant="secondary" className="w-full py-6 text-lg font-bold">
+                  <Button variant="secondary" className="w-full py-6 text-lg font-bold">
                     Send Message
                   </Button>
-                </form>
+                </div>
               </div>
             </div>
           </SectionWrapper>
