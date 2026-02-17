@@ -1,12 +1,51 @@
-"use client";
-
+import { client } from "@/lib/sanity/client";
+import { pageBySlugQuery } from "@/lib/sanity/queries";
+import { HeroSection, DynamicSection, CTASection, TestimonialsSection } from "@/components/SanitySections";
 import SectionWrapper from "@/components/SectionWrapper";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Microscope, Target } from "lucide-react";
+import { GraduationCap, Microscope, Target, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export default function AboutPage() {
+async function getPageData() {
+  try {
+    return await client.fetch(pageBySlugQuery, { slug: "about" });
+  } catch (error) {
+    console.error("Error fetching about page:", error);
+    return null;
+  }
+}
+
+export default async function AboutPage() {
+  const data = await getPageData();
+
+  if (!data) {
+    return <AboutFallback />;
+  }
+
+  const sections = data.sections || [];
+
+  return (
+    <div className="pt-20">
+      {sections.map((section: any, index: number) => {
+        switch (section._type) {
+          case "hero":
+            return <HeroSection key={index} data={section} />;
+          case "section":
+            return <DynamicSection key={index} section={section} />;
+          case "cta":
+            return <CTASection key={index} cta={section} />;
+          case "testimonials":
+            return <TestimonialsSection key={index} data={section} />;
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+function AboutFallback() {
   return (
     <div className="pt-20">
       {/* Hero / Mission */}

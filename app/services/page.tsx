@@ -1,5 +1,6 @@
-"use client";
-
+import { client } from "@/lib/sanity/client";
+import { pageBySlugQuery } from "@/lib/sanity/queries";
+import { HeroSection, DynamicSection, CTASection, TestimonialsSection } from "@/components/SanitySections";
 import SectionWrapper from "@/components/SectionWrapper";
 import { services, digitalPrograms } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,45 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Link from "next/link";
 
-export default function ServicesPage() {
+async function getPageData() {
+  try {
+    return await client.fetch(pageBySlugQuery, { slug: "services" });
+  } catch (error) {
+    console.error("Error fetching services page:", error);
+    return null;
+  }
+}
+
+export default async function ServicesPage() {
+  const data = await getPageData();
+
+  if (!data) {
+    return <ServicesFallback />;
+  }
+
+  const sections = data.sections || [];
+
+  return (
+    <div className="pt-20">
+      {sections.map((section: any, index: number) => {
+        switch (section._type) {
+          case "hero":
+            return <HeroSection key={index} data={section} />;
+          case "section":
+            return <DynamicSection key={index} section={section} />;
+          case "cta":
+            return <CTASection key={index} cta={section} />;
+          case "testimonials":
+            return <TestimonialsSection key={index} data={section} />;
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+function ServicesFallback() {
   const nutritionService = services.find(s => s.id === "integrative-nutrition");
   const corporateService = services.find(s => s.id === "corporate-wellness");
 

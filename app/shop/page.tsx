@@ -1,13 +1,52 @@
-"use client";
-
+import { client } from "@/lib/sanity/client";
+import { pageBySlugQuery } from "@/lib/sanity/queries";
+import { HeroSection, DynamicSection, CTASection, TestimonialsSection } from "@/components/SanitySections";
 import SectionWrapper from "@/components/SectionWrapper";
 import { shopProtocols } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge"; // I might need to add badge component
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Beaker } from "lucide-react";
+import Link from "next/link";
 
-export default function ShopPage() {
+async function getPageData() {
+  try {
+    return await client.fetch(pageBySlugQuery, { slug: "shop" });
+  } catch (error) {
+    console.error("Error fetching shop page:", error);
+    return null;
+  }
+}
+
+export default async function ShopPage() {
+  const data = await getPageData();
+
+  if (!data) {
+    return <ShopFallback />;
+  }
+
+  const sections = data.sections || [];
+
+  return (
+    <div className="pt-20">
+      {sections.map((section: any, index: number) => {
+        switch (section._type) {
+          case "hero":
+            return <HeroSection key={index} data={section} />;
+          case "section":
+            return <DynamicSection key={index} section={section} />;
+          case "cta":
+            return <CTASection key={index} cta={section} />;
+          case "testimonials":
+            return <TestimonialsSection key={index} data={section} />;
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+function ShopFallback() {
   return (
     <div className="pt-20">
       {/* Header */}
