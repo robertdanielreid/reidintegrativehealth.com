@@ -7,6 +7,8 @@ import { siteConfig } from "@/lib/data";
 import PasskeyGate from "@/components/PasskeyGate";
 import { client } from "@/lib/sanity/client";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
+import { draftMode } from "next/headers";
+import VisualEditingComponent from "@/components/VisualEditing";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const roboto = Roboto({
@@ -39,6 +41,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await getSiteSettings();
+  const isDraftMode = draftMode().isEnabled;
 
   return (
     <html lang="en" className={`${inter.variable} ${roboto.variable}`}>
@@ -49,6 +52,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          {isDraftMode && <VisualEditingComponent />}
         </PasskeyGate>
       </body>
     </html>

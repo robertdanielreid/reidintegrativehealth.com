@@ -5,4 +5,8 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
   apiVersion: "2024-02-16",
   useCdn: false, // Set to true for production with revalidation
+  stega: {
+    enabled: true, // Enabling globally for now to ensure visual editing works
+    studioUrl: "/studio",
+  },
 });
